@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getTodos } from "../API/API";
+import { getTodos } from "../../API/API";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 
 const Todos = () => {

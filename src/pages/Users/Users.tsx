@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { getUsers } from "../API/API";
+import { getUsers } from "../../API/API";
+import { Link } from "react-router-dom";
 
 const Users = () => {
   const [users, setUsers] = useState<any[]>([]);
@@ -33,7 +34,8 @@ const Users = () => {
       <h2 className="text-4xl font-bold mb-6 text-center">User List</h2>
       <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {users.map((user) => (
-          <div
+          <Link
+            to={`/users/${user.id}`}
             key={user.id}
             className="p-4 border rounded-lg shadow-md bg-white hover:bg-gray-50 transition duration-200"
           >
@@ -60,7 +62,7 @@ const Users = () => {
                 {user.role}
               </span>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </div>

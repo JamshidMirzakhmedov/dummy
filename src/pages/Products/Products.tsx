@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { Product } from "../Types/Types";
-import Skeleton from "react-loading-skeleton"; // Skeleton loader component
-import "react-loading-skeleton/dist/skeleton.css"; // Skeleton styles
+import { Product } from "../../Types/Types";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 import { Link } from "react-router-dom";
-import { useCartDispatch } from "../Hooks/useCartDispatch";
-import { getProducts } from "../API/API";
+import { useCartDispatch } from "../../Hooks/useCartDispatch";
+import { getProducts } from "../../API/API";
 
 function Products() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -12,11 +12,11 @@ function Products() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [error, setError] = useState<string | null>(null);
-  const limit = 9; // Number of products per page
+  const limit = 9;
 
   useEffect(() => {
     setLoading(true);
-    setError(null); // Clear previous errors
+    setError(null);
 
     const skip = (currentPage - 1) * limit;
 
@@ -59,9 +59,9 @@ function Products() {
   if (loading) {
     return (
       <div className="flex items-center justify-center">
-        <div className="p-6 w-10/12">
+        <div className="p-6 w-full max-w-6xl">
           <h2 className="text-4xl font-extrabold mb-6 text-center">Products</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {Array.from({ length: limit }).map((_, index) => (
               <div
                 key={index}
@@ -87,9 +87,9 @@ function Products() {
 
   return (
     <div className="flex items-center justify-center">
-      <div className="p-6 w-10/12">
+      <div className="p-6 w-full max-w-6xl">
         <h2 className="text-4xl font-extrabold mb-6 text-center">Products</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {products.length === 0 ? (
             <div className="col-span-full text-center text-gray-500">
               No products available
@@ -136,31 +136,6 @@ function Products() {
                     Stock:{" "}
                     <span className="font-semibold">
                       {product.stock || "N/A"}
-                    </span>
-                  </p>
-                  <p className="text-sm text-gray-500 mb-2">
-                    Warranty:{" "}
-                    <span className="font-semibold">
-                      {product.warrantyInformation || "No warranty information"}
-                    </span>
-                  </p>
-                  <p className="text-sm text-gray-500 mb-2">
-                    Shipping:{" "}
-                    <span className="font-semibold">
-                      {product.shippingInformation ||
-                        "Shipping info not available"}
-                    </span>
-                  </p>
-                  <p className="text-sm text-gray-500 mb-2">
-                    Availability:{" "}
-                    <span className="font-semibold">
-                      {product.availabilityStatus || "Status unknown"}
-                    </span>
-                  </p>
-                  <p className="text-sm text-gray-500 mb-2">
-                    Minimum Order Quantity:{" "}
-                    <span className="font-semibold">
-                      {product.minimumOrderQuantity || "N/A"}
                     </span>
                   </p>
                   <div className="flex justify-between items-center mt-4">

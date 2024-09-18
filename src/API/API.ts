@@ -7,13 +7,19 @@ const api = axios.create({
 });
 
 export const getProducts = (skip: number, limit: number) => {
-  return axios.get(
-    `https://dummyjson.com/products?limit=${limit}&skip=${skip}`
-  );
+  return api.get(`/products?limit=${limit}&skip=${skip}`);
+};
+
+export const getProductDetails = (id: string) => {
+  return api.get(`/products/${id}`);
 };
 
 export const getUsers = () => {
   return api.get("/users");
+};
+
+export const getUserById = (id: string) => {
+  return api.get(`/users/${id}`);
 };
 
 export const getPosts = () => {
@@ -24,17 +30,15 @@ export const getTodos = () => {
   return api.get("/todos");
 };
 
-// Function to login the user
 export const loginUser = async (username: string, password: string) => {
   const response = await api.post("/auth/login", {
     username,
     password,
     expiresInMins: 30,
   });
-  return response.data; // Return the token and refreshToken
+  return response.data;
 };
 
-// Function to fetch the current user
 export const fetchCurrentUser = async (token: string) => {
   const response = await api.get("/users/me", {
     headers: {
@@ -44,7 +48,6 @@ export const fetchCurrentUser = async (token: string) => {
   return response.data;
 };
 
-// Function to refresh the session
 export const refreshSession = async (refreshToken: string) => {
   const response = await api.post("/auth/refresh", {
     refreshToken,

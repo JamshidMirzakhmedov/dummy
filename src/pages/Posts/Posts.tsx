@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getPosts } from "../API/API";
+import { getPosts } from "../../API/API";
 import { FaThumbsUp, FaThumbsDown, FaEye } from "react-icons/fa";
 
 const Posts = () => {

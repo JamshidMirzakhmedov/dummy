@@ -12,10 +12,13 @@ const Layout = ({ children }: LayoutProps) => {
   const { user } = useAuth();
   const cart = useCartState();
 
-  // Modal state for the cart
   const [isCartOpen, setIsCartOpen] = useState(false);
 
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   const toggleCartModal = () => setIsCartOpen(!isCartOpen);
+
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
 
@@ -27,7 +30,30 @@ const Layout = ({ children }: LayoutProps) => {
           <h1 className="text-2xl font-bold">
             <Link to="/">Dashboard</Link>
           </h1>
-          <nav className="flex items-center">
+
+          {/* Hamburger menu button */}
+          <button
+            onClick={toggleMenu}
+            className="sm:hidden text-white focus:outline-none"
+          >
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M4 6h16M4 12h16m-7 6h7"
+              ></path>
+            </svg>
+          </button>
+
+          {/* Desktop Menu */}
+          <nav className="hidden sm:flex items-center">
             {user && (
               <Link to="/profile" className="mr-4">
                 Profile
@@ -57,6 +83,62 @@ const Layout = ({ children }: LayoutProps) => {
             )}
           </nav>
         </div>
+
+        {/* Mobile Menu */}
+        {isMenuOpen && (
+          <nav className="sm:hidden mt-4">
+            {user && (
+              <Link
+                to="/profile"
+                className="block px-2 py-1 text-white hover:bg-gray-700"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Profile
+              </Link>
+            )}
+            <Link
+              to="/products"
+              className="block px-2 py-1 text-white hover:bg-gray-700"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Products
+            </Link>
+            <Link
+              to="/users"
+              className="block px-2 py-1 text-white hover:bg-gray-700"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Users
+            </Link>
+            <Link
+              to="/posts"
+              className="block px-2 py-1 text-white hover:bg-gray-700"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Posts
+            </Link>
+            <Link
+              to="/todos"
+              className="block px-2 py-1 text-white hover:bg-gray-700"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Todos
+            </Link>
+
+            {/* Cart Button */}
+            {cart.length > 0 && (
+              <button
+                onClick={() => {
+                  toggleCartModal();
+                  setIsMenuOpen(false);
+                }}
+                className="w-full bg-blue-500 text-white px-4 py-2 mt-2 rounded hover:bg-blue-600"
+              >
+                Cart ({totalItems})
+              </button>
+            )}
+          </nav>
+        )}
       </header>
 
       {/* Main Content */}

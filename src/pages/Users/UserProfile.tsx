@@ -1,5 +1,5 @@
-import Logout from "../components/Logout";
-import { useAuth } from "../Hooks/useAuth";
+import Logout from "../../components/Logout";
+import { useAuth } from "../../Hooks/useAuth";
 
 function UserProfile() {
   const { user } = useAuth();
@@ -18,13 +18,13 @@ function UserProfile() {
         <img
           src={user.image}
           alt={`${user.firstName} ${user.lastName}`}
-          className="w-24 h-24 rounded-full object-cover border-2 border-gray-300"
+          className="sm:w-24 sm:h-24  w-14 h-14 rounded-full object-cover border-2 border-gray-300"
         />
         <div className="ml-6">
           <h1 className="text-2xl font-bold text-gray-900">
             {user.firstName} {user.lastName}
           </h1>
-          <p className="text-lg text-gray-600">{user.email}</p>
+          <p className="sm-text-lg  text-sm text-gray-600">{user.email}</p>
         </div>
       </div>
       <div className="mt-4">

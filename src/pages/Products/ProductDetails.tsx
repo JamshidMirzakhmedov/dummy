@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
-import { Product } from "../Types/Types";
+import { Product } from "../../Types/Types";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -10,7 +9,8 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/effect-fade";
-import { useCartDispatch } from "../Hooks/useCartDispatch";
+import { useCartDispatch } from "../../Hooks/useCartDispatch";
+import { getProductDetails } from "../../API/API";
 
 const ProductDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -19,6 +19,7 @@ const ProductDetails = () => {
   const [error, setError] = useState<string | null>(null);
 
   const dispatch = useCartDispatch();
+
   const handleAddToCart = () => {
     if (product) {
       dispatch({ type: "ADD_TO_CART", product: { ...product, quantity: 1 } });
@@ -29,14 +30,9 @@ const ProductDetails = () => {
     setLoading(true);
     setError(null);
 
-    axios
-      .get(`https://dummyjson.com/products/${id}`)
+    getProductDetails(id!)
       .then((response) => {
-        if (response.data) {
-          setProduct(response.data);
-        } else {
-          throw new Error("Invalid response format");
-        }
+        setProduct(response.data);
         setLoading(false);
       })
       .catch(() => {
@@ -69,7 +65,7 @@ const ProductDetails = () => {
 
   return (
     <div className="flex items-center justify-center">
-      <div className="p-6 w-10/12">
+      <div className="p-4 w-full max-w-3xl">
         <div className="bg-white border rounded-lg shadow-md overflow-hidden">
           {/* Swiper Carousel for images */}
           <Swiper
@@ -94,8 +90,8 @@ const ProductDetails = () => {
           </Swiper>
 
           {/* Product details */}
-          <div className="p-6">
-            <h1 className="text-4xl font-bold mb-4">{product.title}</h1>
+          <div className="p-4">
+            <h1 className="text-3xl font-bold mb-4">{product.title}</h1>
             <p className="text-lg text-gray-700 mb-4">{product.description}</p>
             <p className="text-2xl text-blue-600 font-bold mb-4">
               ${product.price}
@@ -115,49 +111,22 @@ const ProductDetails = () => {
                 <div className="text-sm text-gray-600 mb-2">
                   <strong>Rating:</strong> {product.rating} / 5
                 </div>
-                <div className="text-sm text-gray-600 mb-2">
-                  <strong>SKU:</strong> {product.sku}
-                </div>
-                <div className="text-sm text-gray-600 mb-2">
-                  <strong>Dimensions:</strong> {product.dimensions.width} x{" "}
-                  {product.dimensions.height} x {product.dimensions.depth} cm
-                </div>
-                <div className="text-sm text-gray-600 mb-2">
-                  <strong>Weight:</strong> {product.weight} grams
-                </div>
               </div>
 
               <div>
-                <div className="text-sm text-gray-600 mb-2">
-                  <strong>Warranty:</strong> {product.warrantyInformation}
-                </div>
-                <div className="text-sm text-gray-600 mb-2">
-                  <strong>Shipping:</strong> {product.shippingInformation}
-                </div>
-                <div className="text-sm text-gray-600 mb-2">
-                  <strong>Return Policy:</strong> {product.returnPolicy}
-                </div>
-                <div className="text-sm text-gray-600 mb-2">
-                  <strong>Availability:</strong> {product.availabilityStatus}
-                </div>
-                <div className="text-sm text-gray-600 mb-2">
-                  <strong>Minimum Order Quantity:</strong>{" "}
-                  {product.minimumOrderQuantity}
-                </div>
+                <button
+                  onClick={handleAddToCart}
+                  className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 mt-4"
+                >
+                  Add to Cart
+                </button>
               </div>
             </div>
-
-            <button
-              onClick={handleAddToCart}
-              className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 mt-4"
-            >
-              Add to Cart
-            </button>
 
             {/* Customer Reviews */}
             <div className="mt-8">
               <h2 className="text-2xl font-semibold mb-4">Customer Reviews</h2>
-              {product.reviews.length > 0 ? (
+              {product.reviews && product.reviews.length > 0 ? (
                 product.reviews.map((review, index) => (
                   <div key={index} className="border-b pb-4 mb-4">
                     <div className="flex justify-between items-center mb-2">
