@@ -14,6 +14,14 @@ export const getProductDetails = (id: string) => {
   return api.get(`/products/${id}`);
 };
 
+export const searchProducts = (query: string) => {
+  return api.get(`/products/search?q=${query}`);
+};
+
+export const getSortedProducts = (title: string, order: "asc" | "desc") => {
+  return api.get(`/products?sortBy=${title}&order=${order}`);
+};
+
 export const getUsers = () => {
   return api.get("/users");
 };
