@@ -1,5 +1,5 @@
 import { createContext, useState, ReactNode, useEffect } from "react";
-import axios from "axios";
+import { loginUser, fetchCurrentUser, refreshSession } from "../API/API"; // Import API functions
 
 interface User {
   username: string;
@@ -28,51 +28,30 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const fetchCurrentUser = async () => {
-      try {
-        const response = await axios.get("/api/auth/me", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          withCredentials: true,
-        });
-        setUser(response.data);
-      } catch (error) {
-        console.error("Error fetching current user:", error);
-      } finally {
-        setIsLoading(false);
+    const initAuth = async () => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        try {
+          const currentUser = await fetchCurrentUser(token); // Use the API function
+          setUser(currentUser);
+        } catch (error) {
+          console.error("Error fetching current user:", error);
+        }
       }
+      setIsLoading(false);
     };
 
-    fetchCurrentUser();
+    initAuth();
   }, []);
 
   const login = async (username: string, password: string) => {
     try {
-      const response = await axios.post(
-        "/api/auth/login",
-        {
-          username,
-          password,
-          expiresInMins: 30,
-        },
-        {
-          withCredentials: true,
-        }
-      );
-
-      const { token, refreshToken } = response.data;
+      const { token, refreshToken } = await loginUser(username, password); // Use the API function
       localStorage.setItem("token", token);
       localStorage.setItem("refreshToken", refreshToken);
 
-      // Fetch user info
-      const userResponse = await axios.get("/api/auth/me", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        withCredentials: true,
-      });
-      setUser(userResponse.data);
+      const currentUser = await fetchCurrentUser(token);
+      setUser(currentUser);
     } catch (error) {
       return Promise.reject(error);
     }
@@ -84,38 +63,30 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(null);
   };
 
-  const refreshSession = async () => {
-    try {
-      const response = await axios.post(
-        "/api/auth/refresh",
-        {
-          refreshToken: localStorage.getItem("refreshToken"),
-          expiresInMins: 30,
-        },
-        {
-          withCredentials: true,
-        }
-      );
+  const handleRefreshSession = async () => {
+    const refreshToken = localStorage.getItem("refreshToken");
+    if (refreshToken) {
+      try {
+        const { token } = await refreshSession(refreshToken); // Use the API function
+        localStorage.setItem("token", token);
 
-      const { token } = response.data;
-      localStorage.setItem("token", token);
-
-      // Optionally fetch user info after refreshing the token
-      const userResponse = await axios.get("/api/auth/me", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        withCredentials: true,
-      });
-      setUser(userResponse.data);
-    } catch (error) {
-      console.error("Error refreshing session:", error);
+        const currentUser = await fetchCurrentUser(token);
+        setUser(currentUser);
+      } catch (error) {
+        console.error("Error refreshing session:", error);
+      }
     }
   };
 
   return (
     <AuthContext.Provider
-      value={{ user, login, logout, refreshSession, isLoading }}
+      value={{
+        user,
+        login,
+        logout,
+        refreshSession: handleRefreshSession,
+        isLoading,
+      }}
     >
       {children}
     </AuthContext.Provider>
