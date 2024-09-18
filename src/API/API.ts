@@ -22,6 +22,14 @@ export const getSortedProducts = (title: string, order: "asc" | "desc") => {
   return api.get(`/products?sortBy=${title}&order=${order}`);
 };
 
+export const getCategories = () => {
+  return api.get("/products/categories");
+};
+
+export const getProductsByCategory = (category: string) => {
+  return api.get(`/products/category/${category}`);
+};
+
 export const getUsers = () => {
   return api.get("/users");
 };
